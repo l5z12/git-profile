@@ -43,7 +43,7 @@ archives:
 checksum:
   name_template: checksums.txt
 
-homebrew_casks:
+homebrew_formulas:
   - name: git-profile
     ids:
       - git-profile
