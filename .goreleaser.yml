@@ -1,4 +1,3 @@
----
 version: 2
 
 project_name: git-profile
@@ -6,18 +5,22 @@ project_name: git-profile
 builds:
   - id: git-profile
     binary: git-profile
+    main: .
     env:
       - CGO_ENABLED=0
     flags:
       - -trimpath
-    goarch:
-      - amd64
-      - arm64
     goos:
       - darwin
       - linux
-    ldflags: -s -w -X main.Version={{.Version}} -X main.CommitHash={{.Commit}} -X main.CompileDate={{.Date}}
-    main: .
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X main.Version={{.Version}}
+      - -X main.CommitHash={{.Commit}}
+      - -X main.CompileDate={{.Date}}
 
 universal_binaries:
   - id: git-profile-universal
@@ -43,18 +46,22 @@ archives:
 checksum:
   name_template: checksums.txt
 
-homebrew_formulas:
+source:
+  enabled: true
+
+brews:
   - name: git-profile
-    ids:
-      - git-profile
-    description: Git Profile allows to add and switch between multiple user profiles in your git repositories
     homepage: https://github.com/dotzero/git-profile
+    description: Git Profile allows to add and switch between multiple user profiles in git repositories
+    license: MIT
     repository:
       owner: dotzero
       name: homebrew-tap
     commit_author:
       name: dotzero
       email: mail@dotzero.ru
+    install: |
+      system "go", "build", *std_go_args(ldflags: "-s -w -X main.Version=#{version}")
 
 release:
   github:
