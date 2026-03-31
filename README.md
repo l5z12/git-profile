@@ -67,6 +67,54 @@ Import profile from JSON format
 cat home.json | xargs -0 git profile import home
 ```
 
+## Shell Completion
+
+Shell completion is available for `git-profile` command.
+
+**Note:** Use `git-profile TAB` instead of `git profile TAB` for completion.
+
+### Bash
+
+Requires [bash-completion](https://github.com/scop/bash-completion).
+
+```bash
+# Temporary (current session only)
+source <(git-profile completion bash)
+
+# Permanent (Linux)
+git-profile completion bash | sudo tee /etc/bash_completion.d/git-profile
+
+# Permanent (macOS)
+git-profile completion bash > $(brew --prefix)/etc/bash_completion.d/git-profile
+```
+
+### Zsh
+
+```bash
+# Create completion directory if it doesn't exist
+mkdir -p ~/.zsh/completions
+
+# Generate completion file
+git-profile completion zsh > ~/.zsh/completions/_git-profile
+
+# Add to ~/.zshrc if not already present
+echo 'fpath=(~/.zsh/completions $fpath)' >> ~/.zshrc
+echo "autoload -U compinit && compinit" >> ~/.zshrc
+
+# Reload shell
+source ~/.zshrc
+```
+
+### Fish
+
+```bash
+# Temporary (current session only)
+git-profile completion fish | source
+
+# Permanent
+git-profile completion fish > ~/.config/fish/completions/git-profile.fish
+```
+
 ## License
 
 http://www.opensource.org/licenses/mit-license.php

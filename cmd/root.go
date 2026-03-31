@@ -80,6 +80,7 @@ func (c *Cmd) init() {
 
 	c.AddCommand(
 		Add(c.config),
+		Completion(&c.Command),
 		Current(c.config, c.git),
 		Del(c.config),
 		List(c.config),
