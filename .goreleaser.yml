@@ -1,44 +1,18 @@
 ---
+version: 2
+
 project_name: git-profile
 
-archives:
-  - id: git-profile
-    files:
-      - LICENSE*
-      - README*
-    format: tar.gz
-    name_template: "{{.Binary}}_{{.Version}}_{{.Os}}-{{.Arch}}"
-    replacements:
-      386:    32bit
-      amd64:  64bit
-      darwin: macOS
-      linux:  Linux
-
-brews:
-  - name: git-profile
-    commit_author:
-      name: dotzero
-      email: mail@dotzero.ru
-    description: Git Profile allows to add and switch between multiple user profiles in your git repositories
-    folder: Formula
-    homepage: https://github.com/dotzero/git-profile
-    tap:
-      owner: dotzero
-      name:  homebrew-tap
-    install: |
-      bin.install "git-profile"
-    test: |
-      system "#{bin}/git-profile version"
-
 builds:
-  - binary: git-profile
+  - id: git-profile
+    binary: git-profile
     env:
       - CGO_ENABLED=0
     flags:
       - -trimpath
     goarch:
-      - 386
       - amd64
+      - arm64
     goos:
       - darwin
       - linux
@@ -46,11 +20,43 @@ builds:
     main: .
 
 universal_binaries:
-  - replace: true
+  - id: git-profile-universal
+    ids:
+      - git-profile
+    replace: true
 
-checksum: { name_template: checksums.txt }
+archives:
+  - id: git-profile
+    ids:
+      - git-profile
+      - git-profile-universal
+    files:
+      - LICENSE*
+      - README*
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}_
+      {{- if eq .Os "darwin" }}macOS
+      {{- else }}{{ title .Os }}{{ end }}-
+      {{- if eq .Arch "all" }}all
+      {{- else }}{{ .Arch }}{{ end }}
+
+checksum:
+  name_template: checksums.txt
+
+homebrew_casks:
+  - name: git-profile
+    ids:
+      - git-profile
+    description: Git Profile allows to add and switch between multiple user profiles in your git repositories
+    homepage: https://github.com/dotzero/git-profile
+    repository:
+      owner: dotzero
+      name: homebrew-tap
+    commit_author:
+      name: dotzero
+      email: mail@dotzero.ru
 
 release:
   github:
     owner: dotzero
-    name:  git-profile
+    name: git-profile
