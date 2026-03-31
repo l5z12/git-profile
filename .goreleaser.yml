@@ -22,17 +22,10 @@ builds:
       - -X main.CommitHash={{.Commit}}
       - -X main.CompileDate={{.Date}}
 
-universal_binaries:
-  - id: git-profile-universal
-    ids:
-      - git-profile
-    replace: true
-
 archives:
   - id: git-profile
     ids:
       - git-profile
-      - git-profile-universal
     files:
       - LICENSE*
       - README*
@@ -51,17 +44,21 @@ source:
 
 brews:
   - name: git-profile
+    ids:
+      - git-profile
     homepage: https://github.com/dotzero/git-profile
-    description: Git Profile allows to add and switch between multiple user profiles in git repositories
+    description: Git Profile allows to add and switch between multiple user profiles
     license: MIT
+
     repository:
       owner: dotzero
       name: homebrew-tap
+
     commit_author:
       name: dotzero
       email: mail@dotzero.ru
+
     install: |
-      system "go", "build", *std_go_args(ldflags: "-s -w -X main.Version=#{version}")
 
 release:
   github:
