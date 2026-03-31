@@ -27,5 +27,5 @@ func TestImport(t *testing.T) {
 	err := cmd.Execute()
 
 	is.NoErr(err)
-	is.Equal(strings.TrimSpace(b.String()), "Successfully import `profile` profile")
+	is.Equal(strings.TrimSpace(b.String()), "Successfully imported `profile` profile.")
 }

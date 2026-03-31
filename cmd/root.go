@@ -12,7 +12,7 @@ import (
 	"github.com/dotzero/git-profile/git"
 )
 
-// Cmd is an CLI app
+// Cmd is a CLI app
 type Cmd struct {
 	cobra.Command
 

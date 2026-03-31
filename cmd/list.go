@@ -9,7 +9,7 @@ func List(cfg storage) *cobra.Command {
 	return &cobra.Command{
 		Use:     "list",
 		Aliases: []string{"l"},
-		Short:   "List of profiles",
+		Short:   "List profiles",
 		Long:    "Displays a list of available profiles.",
 		Run: func(cmd *cobra.Command, _ []string) {
 			if cfg.Len() == 0 {

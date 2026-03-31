@@ -10,7 +10,7 @@ import (
 func Completion(rootCmd *cobra.Command) *cobra.Command {
 	return &cobra.Command{
 		Use:   "completion [bash|zsh|fish|powershell]",
-		Short: "Generate completion script",
+		Short: "Generate shell completion script",
 		Long: `Generate shell completion script for Git Profile.
 
 To load completions:
@@ -47,7 +47,7 @@ Fish:
 		ValidArgs:             []string{"bash", "zsh", "fish", "powershell"},
 		Args:                  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 		DisableFlagsInUseLine: true,
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, args []string) {
 			switch args[0] {
 			case "bash":
 				_ = rootCmd.GenBashCompletionV2(os.Stdout, true)

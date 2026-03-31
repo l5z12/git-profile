@@ -14,8 +14,8 @@ func Import(cfg storage) *cobra.Command {
 	return &cobra.Command{
 		Use:     "import [profile] [json-values]",
 		Aliases: []string{"i"},
-		Short:   "Import profile",
-		Long:    "Import profile from JSON format.",
+		Short:   "Import a profile",
+		Long:    "Import a profile from JSON format.",
 		Args:    cobra.ExactArgs(2),
 		Example: "cat my-profile.json | xargs -0 git-profile import my-profile",
 		Run: func(cmd *cobra.Command, args []string) {
@@ -26,7 +26,7 @@ func Import(cfg storage) *cobra.Command {
 
 			err := json.Unmarshal([]byte(args[1]), &entries)
 			if err != nil {
-				cmd.PrintErr("Unable to decode profile values\n", err)
+				cmd.PrintErrln("Unable to decode profile values:", err)
 				os.Exit(1)
 			}
 
@@ -40,7 +40,7 @@ func Import(cfg storage) *cobra.Command {
 				os.Exit(1)
 			}
 
-			cmd.Printf("Successfully import `%s` profile", profile)
+			cmd.Printf("Successfully imported `%s` profile.\n", profile)
 		},
 	}
 }
