@@ -2,30 +2,38 @@ version: 2
 
 project_name: git-profile
 
+before:
+  hooks:
+    - go mod download
+    - go test -v ./...
+
 builds:
   - id: git-profile
     binary: git-profile
-    main: .
     env:
       - CGO_ENABLED=0
     flags:
       - -trimpath
-    goos:
-      - darwin
-      - linux
     goarch:
       - amd64
       - arm64
-    ldflags:
-      - -s -w
-      - -X main.Version={{.Version}}
-      - -X main.CommitHash={{.Commit}}
-      - -X main.CompileDate={{.Date}}
+    goos:
+      - darwin
+      - linux
+    ldflags: -s -w -X main.Version={{.Version}} -X main.CommitHash={{.Commit}} -X main.CompileDate={{.Date}}
+    main: .
+
+universal_binaries:
+  - id: git-profile-universal
+    ids:
+      - git-profile
+    replace: true
 
 archives:
   - id: git-profile
     ids:
       - git-profile
+      - git-profile-universal
     files:
       - LICENSE*
       - README*
@@ -42,23 +50,24 @@ checksum:
 source:
   enabled: true
 
-brews:
+homebrew_casks:
   - name: git-profile
     ids:
       - git-profile
+    description: Git Profile allows to add and switch between multiple user profiles in your git repositories
     homepage: https://github.com/dotzero/git-profile
-    description: Git Profile allows to add and switch between multiple user profiles
-    license: MIT
-
     repository:
       owner: dotzero
       name: homebrew-tap
-
     commit_author:
       name: dotzero
       email: mail@dotzero.ru
-
-    install: |
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/restish"]
+          end
 
 release:
   github:
