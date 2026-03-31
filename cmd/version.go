@@ -9,7 +9,7 @@ func Version(c *Cmd) *cobra.Command {
 	return &cobra.Command{
 		Use:   "version",
 		Short: "Print the version number of Git Profile",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(cmd *cobra.Command, _ []string) {
 			cmd.Println("Git Profile")
 			cmd.Println("Version:", c.Version)
 			cmd.Println("Commit hash:", c.CommitHash)

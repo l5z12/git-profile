@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"os"
 )
 
@@ -95,7 +94,7 @@ func (c *Config) Save(filename string) error {
 		return err
 	}
 
-	return ioutil.WriteFile(filename, data, 0644) // nolint
+	return os.WriteFile(filename, data, 0o644) //nolint:gosec
 }
 
 // Load profiles from json file
@@ -107,7 +106,7 @@ func (c *Config) Load(filename string) (err error) {
 		}
 	}
 
-	body, err := ioutil.ReadFile(filename) // nolint
+	body, err := os.ReadFile(filename) //nolint:gosec
 	if err != nil {
 		return err
 	}

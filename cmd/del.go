@@ -25,7 +25,7 @@ func Del(cfg storage) *cobra.Command {
 			profile := args[0]
 			filename, _ := cmd.Flags().GetString("config")
 
-			if len(args) == 1 { // nolint
+			if len(args) == 1 { //nolint
 				if ok := cfg.DeleteProfile(profile); !ok {
 					cmd.PrintErrln("There is no profile with given name")
 					os.Exit(1)
