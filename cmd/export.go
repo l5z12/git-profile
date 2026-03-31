@@ -31,7 +31,7 @@ func Export(cfg storage) *cobra.Command {
 				os.Exit(1)
 			}
 
-			cmd.Printf(string(data))
+			cmd.Print(string(data))
 		},
 	}
 }

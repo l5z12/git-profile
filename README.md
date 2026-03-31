@@ -8,7 +8,7 @@ Git Profile allows you to switch between multiple user profiles in git repositor
 
 ## Installation
 
-If you are MacOS user, you can use [Homebrew](http://brew.sh/):
+If you are a macOS user, you can use [Homebrew](http://brew.sh/):
 
 ```bash
 brew install dotzero/tap/git-profile

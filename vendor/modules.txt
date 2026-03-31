@@ -1,7 +1,7 @@
 # github.com/inconshreveable/mousetrap v1.0.0
 ## explicit
 github.com/inconshreveable/mousetrap
-# github.com/matryer/is v1.4.0
+# github.com/matryer/is v1.4.1
 ## explicit; go 1.14
 github.com/matryer/is
 # github.com/mitchellh/go-homedir v1.1.0
