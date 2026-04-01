@@ -98,6 +98,12 @@ linters:
           severity: warning
           disabled: false
 
+    staticcheck:
+      checks:
+        - "all"
+        - "-ST1000"
+        - "-ST1005"
+
   exclusions:
     generated: lax
     rules:

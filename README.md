@@ -1,7 +1,6 @@
 # Git Profile switcher
 
 [![build](https://github.com/dotzero/git-profile/actions/workflows/ci.yml/badge.svg)](https://github.com/dotzero/git-profile/actions/workflows/ci.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/dotzero/git-profile)](https://goreportcard.com/report/github.com/dotzero/git-profile)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/dotzero/git-profile/blob/master/LICENSE)
 
 Git Profile allows you to switch between multiple user profiles in git repositories
@@ -34,7 +33,7 @@ Adds an entry to a profile or updates an existing profile
 
 ```bash
 git profile add home user.name dotzero
-git profile add home user.email "me@dotzero.ru"
+git profile add home user.email "mail@mail.com"
 git profile add home user.signingkey AAAAAAAA
 ```
 
@@ -53,6 +52,12 @@ git profile use home
 # git config --local user.name dotzero
 # git config --local user.email "me@dotzero.ru"
 # git config --local user.signingkey AAAAAAAA
+```
+
+If no profile name is provided, an interactive selector will appear to choose a profile
+
+```bash
+git profile use
 ```
 
 Export a profile in JSON format
