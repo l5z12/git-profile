@@ -14,6 +14,9 @@ func TestUse(t *testing.T) {
 	is := is.New(t)
 
 	cfg := &storageMock{
+		LenFunc: func() int {
+			return 1
+		},
 		LookupFunc: func(name string) ([]config.Entry, bool) {
 			return []config.Entry{
 				{Key: "user.email", Value: "work@example.com"},
