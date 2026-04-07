@@ -5,6 +5,8 @@
 
 Git Profile allows you to switch between multiple user profiles in git repositories
 
+![](./demo/demo.gif)
+
 ## Installation
 
 If you are a macOS user, you can use [Homebrew](http://brew.sh/):
