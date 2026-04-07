@@ -37,6 +37,17 @@ git profile add home user.email "mail@mail.com"
 git profile add home user.signingkey AAAAAAAA
 ```
 
+If no arguments are provided, `add` starts an interactive mode:
+
+```bash
+git profile add
+```
+
+It will ask for the profile name and values for `user.name`, `user.email`, and
+`user.signingkey`. Leaving a field empty skips writing that field for a new
+profile. For an existing profile, the current values are prefilled and pressing
+Enter keeps them unchanged. Press `Esc` or `Ctrl+C` to cancel interactive mode.
+
 Displays a list of available profiles
 
 ```bash
