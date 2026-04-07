@@ -1,10 +1,10 @@
 package cmd
 
-import (
-	"github.com/dotzero/git-profile/config"
-)
+//go:generate go tool github.com/matryer/moq -skip-ensure -out mock.go . storage vcs
 
-//go:generate moq -skip-ensure -out mock.go . storage vcs
+import (
+	"github.com/dotzero/git-profile/internal/config"
+)
 
 type storage interface {
 	Len() int

@@ -7,7 +7,7 @@ import (
 
 	"github.com/matryer/is"
 
-	"github.com/dotzero/git-profile/config"
+	"github.com/dotzero/git-profile/internal/config"
 )
 
 func TestList(t *testing.T) {

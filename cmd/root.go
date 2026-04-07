@@ -8,8 +8,8 @@ import (
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 
-	"github.com/dotzero/git-profile/config"
-	"github.com/dotzero/git-profile/git"
+	"github.com/dotzero/git-profile/internal/config"
+	"github.com/dotzero/git-profile/internal/git"
 )
 
 // Cmd is a CLI app

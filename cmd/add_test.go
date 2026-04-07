@@ -10,7 +10,7 @@ import (
 	"charm.land/huh/v2"
 	"github.com/matryer/is"
 
-	"github.com/dotzero/git-profile/config"
+	"github.com/dotzero/git-profile/internal/config"
 )
 
 func TestAdd(t *testing.T) {

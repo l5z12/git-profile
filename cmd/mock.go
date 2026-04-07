@@ -4,46 +4,46 @@
 package cmd
 
 import (
-	"github.com/dotzero/git-profile/config"
+	"github.com/dotzero/git-profile/internal/config"
 	"sync"
 )
 
 // storageMock is a mock implementation of storage.
 //
-// 	func TestSomethingThatUsesstorage(t *testing.T) {
+//	func TestSomethingThatUsesstorage(t *testing.T) {
 //
-// 		// make and configure a mocked storage
-// 		mockedstorage := &storageMock{
-// 			DeleteFunc: func(profile string, value string) bool {
-// 				panic("mock out the Delete method")
-// 			},
-// 			DeleteProfileFunc: func(profile string) bool {
-// 				panic("mock out the DeleteProfile method")
-// 			},
-// 			LenFunc: func() int {
-// 				panic("mock out the Len method")
-// 			},
-// 			LoadFunc: func(filename string) error {
-// 				panic("mock out the Load method")
-// 			},
-// 			LookupFunc: func(name string) ([]config.Entry, bool) {
-// 				panic("mock out the Lookup method")
-// 			},
-// 			NamesFunc: func() []string {
-// 				panic("mock out the Names method")
-// 			},
-// 			SaveFunc: func(filename string) error {
-// 				panic("mock out the Save method")
-// 			},
-// 			StoreFunc: func(profile string, key string, value string)  {
-// 				panic("mock out the Store method")
-// 			},
-// 		}
+//		// make and configure a mocked storage
+//		mockedstorage := &storageMock{
+//			DeleteFunc: func(profile string, value string) bool {
+//				panic("mock out the Delete method")
+//			},
+//			DeleteProfileFunc: func(profile string) bool {
+//				panic("mock out the DeleteProfile method")
+//			},
+//			LenFunc: func() int {
+//				panic("mock out the Len method")
+//			},
+//			LoadFunc: func(filename string) error {
+//				panic("mock out the Load method")
+//			},
+//			LookupFunc: func(name string) ([]config.Entry, bool) {
+//				panic("mock out the Lookup method")
+//			},
+//			NamesFunc: func() []string {
+//				panic("mock out the Names method")
+//			},
+//			SaveFunc: func(filename string) error {
+//				panic("mock out the Save method")
+//			},
+//			StoreFunc: func(profile string, key string, value string)  {
+//				panic("mock out the Store method")
+//			},
+//		}
 //
-// 		// use mockedstorage in code that requires storage
-// 		// and then make assertions.
+//		// use mockedstorage in code that requires storage
+//		// and then make assertions.
 //
-// 	}
+//	}
 type storageMock struct {
 	// DeleteFunc mocks the Delete method.
 	DeleteFunc func(profile string, value string) bool
@@ -144,7 +144,8 @@ func (mock *storageMock) Delete(profile string, value string) bool {
 
 // DeleteCalls gets all the calls that were made to Delete.
 // Check the length with:
-//     len(mockedstorage.DeleteCalls())
+//
+//	len(mockedstorage.DeleteCalls())
 func (mock *storageMock) DeleteCalls() []struct {
 	Profile string
 	Value   string
@@ -177,7 +178,8 @@ func (mock *storageMock) DeleteProfile(profile string) bool {
 
 // DeleteProfileCalls gets all the calls that were made to DeleteProfile.
 // Check the length with:
-//     len(mockedstorage.DeleteProfileCalls())
+//
+//	len(mockedstorage.DeleteProfileCalls())
 func (mock *storageMock) DeleteProfileCalls() []struct {
 	Profile string
 } {
@@ -205,7 +207,8 @@ func (mock *storageMock) Len() int {
 
 // LenCalls gets all the calls that were made to Len.
 // Check the length with:
-//     len(mockedstorage.LenCalls())
+//
+//	len(mockedstorage.LenCalls())
 func (mock *storageMock) LenCalls() []struct {
 } {
 	var calls []struct {
@@ -234,7 +237,8 @@ func (mock *storageMock) Load(filename string) error {
 
 // LoadCalls gets all the calls that were made to Load.
 // Check the length with:
-//     len(mockedstorage.LoadCalls())
+//
+//	len(mockedstorage.LoadCalls())
 func (mock *storageMock) LoadCalls() []struct {
 	Filename string
 } {
@@ -265,7 +269,8 @@ func (mock *storageMock) Lookup(name string) ([]config.Entry, bool) {
 
 // LookupCalls gets all the calls that were made to Lookup.
 // Check the length with:
-//     len(mockedstorage.LookupCalls())
+//
+//	len(mockedstorage.LookupCalls())
 func (mock *storageMock) LookupCalls() []struct {
 	Name string
 } {
@@ -293,7 +298,8 @@ func (mock *storageMock) Names() []string {
 
 // NamesCalls gets all the calls that were made to Names.
 // Check the length with:
-//     len(mockedstorage.NamesCalls())
+//
+//	len(mockedstorage.NamesCalls())
 func (mock *storageMock) NamesCalls() []struct {
 } {
 	var calls []struct {
@@ -322,7 +328,8 @@ func (mock *storageMock) Save(filename string) error {
 
 // SaveCalls gets all the calls that were made to Save.
 // Check the length with:
-//     len(mockedstorage.SaveCalls())
+//
+//	len(mockedstorage.SaveCalls())
 func (mock *storageMock) SaveCalls() []struct {
 	Filename string
 } {
@@ -357,7 +364,8 @@ func (mock *storageMock) Store(profile string, key string, value string) {
 
 // StoreCalls gets all the calls that were made to Store.
 // Check the length with:
-//     len(mockedstorage.StoreCalls())
+//
+//	len(mockedstorage.StoreCalls())
 func (mock *storageMock) StoreCalls() []struct {
 	Profile string
 	Key     string
@@ -376,25 +384,25 @@ func (mock *storageMock) StoreCalls() []struct {
 
 // vcsMock is a mock implementation of vcs.
 //
-// 	func TestSomethingThatUsesvcs(t *testing.T) {
+//	func TestSomethingThatUsesvcs(t *testing.T) {
 //
-// 		// make and configure a mocked vcs
-// 		mockedvcs := &vcsMock{
-// 			GetFunc: func(key string) (string, error) {
-// 				panic("mock out the Get method")
-// 			},
-// 			IsRepositoryFunc: func() bool {
-// 				panic("mock out the IsRepository method")
-// 			},
-// 			SetFunc: func(key string, value string) error {
-// 				panic("mock out the Set method")
-// 			},
-// 		}
+//		// make and configure a mocked vcs
+//		mockedvcs := &vcsMock{
+//			GetFunc: func(key string) (string, error) {
+//				panic("mock out the Get method")
+//			},
+//			IsRepositoryFunc: func() bool {
+//				panic("mock out the IsRepository method")
+//			},
+//			SetFunc: func(key string, value string) error {
+//				panic("mock out the Set method")
+//			},
+//		}
 //
-// 		// use mockedvcs in code that requires vcs
-// 		// and then make assertions.
+//		// use mockedvcs in code that requires vcs
+//		// and then make assertions.
 //
-// 	}
+//	}
 type vcsMock struct {
 	// GetFunc mocks the Get method.
 	GetFunc func(key string) (string, error)
@@ -446,7 +454,8 @@ func (mock *vcsMock) Get(key string) (string, error) {
 
 // GetCalls gets all the calls that were made to Get.
 // Check the length with:
-//     len(mockedvcs.GetCalls())
+//
+//	len(mockedvcs.GetCalls())
 func (mock *vcsMock) GetCalls() []struct {
 	Key string
 } {
@@ -474,7 +483,8 @@ func (mock *vcsMock) IsRepository() bool {
 
 // IsRepositoryCalls gets all the calls that were made to IsRepository.
 // Check the length with:
-//     len(mockedvcs.IsRepositoryCalls())
+//
+//	len(mockedvcs.IsRepositoryCalls())
 func (mock *vcsMock) IsRepositoryCalls() []struct {
 } {
 	var calls []struct {
@@ -505,7 +515,8 @@ func (mock *vcsMock) Set(key string, value string) error {
 
 // SetCalls gets all the calls that were made to Set.
 // Check the length with:
-//     len(mockedvcs.SetCalls())
+//
+//	len(mockedvcs.SetCalls())
 func (mock *vcsMock) SetCalls() []struct {
 	Key   string
 	Value string

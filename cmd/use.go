@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"sort"
 
 	"charm.land/huh/v2"
 	"github.com/spf13/cobra"
@@ -42,16 +41,14 @@ func resolveProfile(cfg storage, args []string) (string, error) {
 		return args[0], nil
 	}
 
-	names := cfg.Names()
-	sort.Strings(names)
-
 	var profile string
 
-	err := huh.NewSelect[string]().
+	s := huh.NewSelect[string]().
 		Title("Select a profile").
-		Options(huh.NewOptions(names...)...).
-		Value(&profile).
-		Run()
+		Options(huh.NewOptions(cfg.Names()...)...).
+		Value(&profile)
+
+	err := huh.NewForm(huh.NewGroup(s)).Run()
 	if err != nil {
 		return "", fmt.Errorf("Unable to select a profile: %w", err)
 	}

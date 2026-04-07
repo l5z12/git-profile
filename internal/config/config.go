@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/json"
 	"os"
+	"sort"
 )
 
 // Entry is the entry in config file
@@ -42,6 +43,8 @@ func (c *Config) Names() []string {
 	for name := range c.Profiles {
 		names = append(names, name)
 	}
+
+	sort.Strings(names)
 
 	return names
 }

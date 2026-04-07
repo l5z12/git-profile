@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"sort"
 
 	"charm.land/huh/v2"
 	"github.com/spf13/cobra"
@@ -92,17 +91,14 @@ func promptDeleteProfile(cfg storage, _ io.Writer) (string, error) {
 		return "", fmt.Errorf("There are no available profiles")
 	}
 
-	names := cfg.Names()
-	sort.Strings(names)
-
 	var profile string
 
-	err := huh.NewSelect[string]().
-		Title("Select a profile to delete").
-		Options(huh.NewOptions(names...)...).
-		Value(&profile).
-		WithKeyMap(huh.NewDefaultKeyMap()).
-		Run()
+	s := huh.NewSelect[string]().
+		Title("Select a profile").
+		Options(huh.NewOptions(cfg.Names()...)...).
+		Value(&profile)
+
+	err := huh.NewForm(huh.NewGroup(s)).Run()
 	if err != nil {
 		return "", err
 	}
