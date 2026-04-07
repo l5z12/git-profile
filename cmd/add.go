@@ -6,10 +6,10 @@ import (
 	"os"
 	"strings"
 
-	"charm.land/huh/v2"
 	"github.com/spf13/cobra"
 
 	"github.com/dotzero/git-profile/internal/config"
+	"github.com/dotzero/git-profile/internal/ui"
 )
 
 const (
@@ -18,17 +18,16 @@ const (
 	userSigningKeyKey = "user.signingkey"
 )
 
-type addPromptResult struct {
-	Profile string
-	Values  map[string]string
-}
-
 // Add returns `add` command
 func Add(cfg storage) *cobra.Command {
-	return addCommand(cfg, runAddPrompt)
+	return addCommand(cfg, ui.PromptProfileName, ui.PromptProfileFields)
 }
 
-func addCommand(cfg storage, prompt func(storage, io.Reader, io.Writer) (addPromptResult, error)) *cobra.Command {
+func addCommand(
+	cfg storage,
+	promptProfileName func(io.Reader, io.Writer) (string, error),
+	editProfileFields func(ui.ProfileFormData, io.Reader, io.Writer) (ui.ProfileFormData, error),
+) *cobra.Command {
 	return &cobra.Command{
 		Use:     "add [profile] [key] [value]",
 		Aliases: []string{"set"},
@@ -50,31 +49,32 @@ func addCommand(cfg storage, prompt func(storage, io.Reader, io.Writer) (addProm
 		Run: func(cmd *cobra.Command, args []string) {
 			filename, _ := cmd.Flags().GetString("config")
 
-			if len(args) == 3 { //nolint:mnd
-				err := storeSingleEntry(cmd, cfg, filename, args[0], args[1], args[2])
+			switch len(args) {
+			case 3:
+				err := profileUpdateEntry(cmd, cfg, filename, args[0], args[1], args[2])
 				if err != nil {
 					cmd.PrintErrln("Unable to save config file:", err)
 					os.Exit(1)
 				}
 
 				return
-			}
+			case 0:
+				err := profileUpdateEntries(cmd, cfg, filename, promptProfileName, editProfileFields)
+				if err != nil {
+					if ui.IsAborted(err) {
+						cmd.Println("Interactive add cancelled.")
+						return
+					}
 
-			err := storeInteractiveEntries(cmd, cfg, filename, prompt)
-			if err != nil {
-				if err == huh.ErrUserAborted {
-					cmd.Println("Interactive add cancelled.")
-					return
+					cmd.PrintErrln("Unable to save config file:", err)
+					os.Exit(1)
 				}
-
-				cmd.PrintErrln("Unable to save config file:", err)
-				os.Exit(1)
 			}
 		},
 	}
 }
 
-func storeSingleEntry(
+func profileUpdateEntry(
 	cmd *cobra.Command,
 	cfg storage,
 	filename string,
@@ -94,13 +94,31 @@ func storeSingleEntry(
 	return nil
 }
 
-func storeInteractiveEntries(
+//nolint:funlen
+func profileUpdateEntries(
 	cmd *cobra.Command,
 	cfg storage,
 	filename string,
-	prompt func(storage, io.Reader, io.Writer) (addPromptResult, error),
+	promptProfileName func(io.Reader, io.Writer) (string, error),
+	editProfileFields func(ui.ProfileFormData, io.Reader, io.Writer) (ui.ProfileFormData, error),
 ) error {
-	result, err := prompt(cfg, cmd.InOrStdin(), cmd.OutOrStdout())
+	profile, err := promptProfileName(cmd.InOrStdin(), cmd.OutOrStdout())
+	if err != nil {
+		return err
+	}
+
+	formData := ui.ProfileFormData{
+		Profile: profile,
+	}
+
+	if entries, ok := cfg.Lookup(profile); ok {
+		values := entriesToMap(entries)
+		formData.UserName = values[userNameKey]
+		formData.UserEmail = values[userEmailKey]
+		formData.UserSigningKey = values[userSigningKeyKey]
+	}
+
+	result, err := editProfileFields(formData, cmd.InOrStdin(), cmd.OutOrStdout())
 	if err != nil {
 		return err
 	}
@@ -112,8 +130,14 @@ func storeInteractiveEntries(
 
 	changed := 0
 
+	values := map[string]string{
+		userNameKey:       result.UserName,
+		userEmailKey:      result.UserEmail,
+		userSigningKeyKey: result.UserSigningKey,
+	}
+
 	for _, key := range []string{userNameKey, userEmailKey, userSigningKeyKey} {
-		value := strings.TrimSpace(result.Values[key])
+		value := strings.TrimSpace(values[key])
 		if value == "" {
 			continue
 		}
@@ -140,68 +164,6 @@ func storeInteractiveEntries(
 	cmd.Printf("Successfully updated `%s` profile.\n", result.Profile)
 
 	return nil
-}
-
-func runAddPrompt(cfg storage, in io.Reader, out io.Writer) (addPromptResult, error) {
-	result := addPromptResult{
-		Values: make(map[string]string),
-	}
-
-	err := huh.NewForm(
-		huh.NewGroup(huh.
-			NewInput().
-			Title("Enter an existing profile name or a new one.").
-			Value(&result.Profile).
-			Validate(func(value string) error {
-				if strings.TrimSpace(value) == "" {
-					return fmt.Errorf("profile name cannot be empty")
-				}
-
-				return nil
-			}),
-		),
-	).WithKeyMap(huh.NewDefaultKeyMap()).WithInput(in).WithOutput(out).Run()
-	if err != nil {
-		return addPromptResult{}, err
-	}
-
-	result.Profile = strings.TrimSpace(result.Profile)
-
-	var (
-		name       string
-		email      string
-		signingKey string
-	)
-
-	if entries, ok := cfg.Lookup(result.Profile); ok {
-		values := entriesToMap(entries)
-		name = values[userNameKey]
-		email = values[userEmailKey]
-		signingKey = values[userSigningKeyKey]
-	}
-
-	err = huh.NewForm(
-		huh.NewGroup(
-			huh.NewInput().
-				Title("Value for user.name").
-				Value(&name),
-			huh.NewInput().
-				Title("Value for user.email").
-				Value(&email),
-			huh.NewInput().
-				Title("Value for user.signingkey").
-				Value(&signingKey),
-		),
-	).WithKeyMap(huh.NewDefaultKeyMap()).WithInput(in).WithOutput(out).Run()
-	if err != nil {
-		return addPromptResult{}, err
-	}
-
-	result.Values[userNameKey] = name
-	result.Values[userEmailKey] = email
-	result.Values[userSigningKeyKey] = signingKey
-
-	return result, nil
 }
 
 func entriesToMap(entries []config.Entry) map[string]string {

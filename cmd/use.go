@@ -2,14 +2,24 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 	"os"
 
-	"charm.land/huh/v2"
 	"github.com/spf13/cobra"
+
+	"github.com/dotzero/git-profile/internal/ui"
 )
 
 // Use returns `use` command
 func Use(cfg storage, v vcs) *cobra.Command {
+	return useCommand(cfg, v, ui.SelectProfile)
+}
+
+func useCommand(
+	cfg storage,
+	v vcs,
+	selectProfile func([]string, io.Reader, io.Writer) (string, error),
+) *cobra.Command {
 	return &cobra.Command{
 		Use:     "use [profile]",
 		Aliases: []string{"u"},
@@ -21,18 +31,24 @@ func Use(cfg storage, v vcs) *cobra.Command {
 				os.Exit(1)
 			}
 
-			profile, err := resolveProfile(cfg, args)
+			profile, err := profileResolve(args, cmd.InOrStdin(), cmd.OutOrStdout(), cfg, selectProfile)
 			if err != nil {
 				cmd.PrintErrln(err)
 				os.Exit(1)
 			}
 
-			applyProfile(cmd, cfg, v, profile)
+			profileApply(cmd, cfg, v, profile)
 		},
 	}
 }
 
-func resolveProfile(cfg storage, args []string) (string, error) {
+func profileResolve(
+	args []string,
+	in io.Reader,
+	out io.Writer,
+	cfg storage,
+	selectProfile func([]string, io.Reader, io.Writer) (string, error),
+) (string, error) {
 	if cfg.Len() == 0 {
 		return "", fmt.Errorf("There are no available profiles")
 	}
@@ -41,14 +57,7 @@ func resolveProfile(cfg storage, args []string) (string, error) {
 		return args[0], nil
 	}
 
-	var profile string
-
-	s := huh.NewSelect[string]().
-		Title("Select a profile").
-		Options(huh.NewOptions(cfg.Names()...)...).
-		Value(&profile)
-
-	err := huh.NewForm(huh.NewGroup(s)).Run()
+	profile, err := selectProfile(cfg.Names(), in, out)
 	if err != nil {
 		return "", fmt.Errorf("Unable to select a profile: %w", err)
 	}
@@ -56,7 +65,7 @@ func resolveProfile(cfg storage, args []string) (string, error) {
 	return profile, nil
 }
 
-func applyProfile(cmd *cobra.Command, cfg storage, v vcs, profile string) {
+func profileApply(cmd *cobra.Command, cfg storage, v vcs, profile string) {
 	entries, ok := cfg.Lookup(profile)
 	if !ok {
 		cmd.PrintErrf("There is no profile with `%s` name\n", profile)

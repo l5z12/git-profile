@@ -111,6 +111,7 @@ linters:
         linters:
           - errcheck
           - funlen
+          - goconst
           - gosec
           - noctx
           - prealloc

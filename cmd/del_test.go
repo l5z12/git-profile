@@ -14,6 +14,9 @@ func TestDel(t *testing.T) {
 	is := is.New(t)
 
 	cfg := &storageMock{
+		NamesFunc: func() []string {
+			return []string{"work"}
+		},
 		DeleteProfileFunc: func(profile string) bool {
 			return true
 		},
@@ -62,6 +65,9 @@ func TestDelInteractive(t *testing.T) {
 	is := is.New(t)
 
 	cfg := &storageMock{
+		NamesFunc: func() []string {
+			return []string{"work"}
+		},
 		DeleteProfileFunc: func(profile string) bool {
 			return true
 		},
@@ -72,7 +78,7 @@ func TestDelInteractive(t *testing.T) {
 
 	var b bytes.Buffer
 
-	cmd := delCommand(cfg, func(cfg storage, _ io.Writer) (string, error) {
+	cmd := delCommand(cfg, func(_ []string, _ io.Reader, _ io.Writer) (string, error) {
 		return "work", nil
 	})
 
@@ -91,6 +97,9 @@ func TestDelInteractiveCancelled(t *testing.T) {
 	is := is.New(t)
 
 	cfg := &storageMock{
+		NamesFunc: func() []string {
+			return []string{"work"}
+		},
 		DeleteProfileFunc: func(profile string) bool {
 			t.Fatalf("DeleteProfile should not be called")
 			return false
@@ -106,7 +115,7 @@ func TestDelInteractiveCancelled(t *testing.T) {
 		errOut bytes.Buffer
 	)
 
-	cmd := delCommand(cfg, func(cfg storage, _ io.Writer) (string, error) {
+	cmd := delCommand(cfg, func(_ []string, _ io.Reader, _ io.Writer) (string, error) {
 		return "", huh.ErrUserAborted
 	})
 
@@ -118,23 +127,4 @@ func TestDelInteractiveCancelled(t *testing.T) {
 	is.NoErr(err)
 	is.Equal(strings.TrimSpace(out.String()), "Interactive delete cancelled.")
 	is.Equal(errOut.String(), "")
-}
-
-func TestDelInteractiveNoProfiles(t *testing.T) {
-	is := is.New(t)
-
-	cfg := &storageMock{
-		LenFunc: func() int {
-			return 0
-		},
-		NamesFunc: func() []string {
-			t.Fatalf("Names should not be called")
-			return nil
-		},
-	}
-
-	_, err := promptDeleteProfile(cfg, &bytes.Buffer{})
-
-	is.True(err != nil)
-	is.Equal(err.Error(), "There are no available profiles")
 }

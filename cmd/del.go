@@ -5,17 +5,21 @@ import (
 	"io"
 	"os"
 
-	"charm.land/huh/v2"
 	"github.com/spf13/cobra"
+
+	"github.com/dotzero/git-profile/internal/ui"
 )
 
 // Del returns `del` command
 func Del(cfg storage) *cobra.Command {
-	return delCommand(cfg, promptDeleteProfile)
+	return delCommand(cfg, ui.SelectProfile)
 }
 
 //nolint:funlen
-func delCommand(cfg storage, prompt func(storage, io.Writer) (string, error)) *cobra.Command {
+func delCommand(
+	cfg storage,
+	prompt func([]string, io.Reader, io.Writer) (string, error),
+) *cobra.Command {
 	return &cobra.Command{
 		Use:     "del [profile] [key]",
 		Aliases: []string{"rm"},
@@ -39,10 +43,11 @@ func delCommand(cfg storage, prompt func(storage, io.Writer) (string, error)) *c
 		Run: func(cmd *cobra.Command, args []string) {
 			filename, _ := cmd.Flags().GetString("config")
 
-			if len(args) == 0 {
-				profile, err := prompt(cfg, cmd.OutOrStdout())
+			switch len(args) {
+			case 0:
+				profile, err := prompt(cfg.Names(), cmd.InOrStdin(), cmd.OutOrStdout())
 				if err != nil {
-					if err == huh.ErrUserAborted {
+					if ui.IsAborted(err) {
 						cmd.Println("Interactive delete cancelled.")
 						return
 					}
@@ -51,24 +56,23 @@ func delCommand(cfg storage, prompt func(storage, io.Writer) (string, error)) *c
 					os.Exit(1)
 				}
 
-				err = deleteProfile(cmd, cfg, filename, profile)
+				err = profileDelete(cmd, cfg, filename, profile)
 				if err != nil {
 					cmd.PrintErrln("Unable to save config file:", err)
 					os.Exit(1)
 				}
 
 				return
-			}
+			case 1:
+				profile := args[0]
 
-			profile := args[0]
-
-			if len(args) == 1 {
-				err := deleteProfile(cmd, cfg, filename, profile)
+				err := profileDelete(cmd, cfg, filename, profile)
 				if err != nil {
 					cmd.PrintErrln("Unable to save config file:", err)
 					os.Exit(1)
 				}
-			} else {
+			case 2:
+				profile := args[0]
 				if ok := cfg.Delete(profile, args[1]); !ok {
 					cmd.PrintErrln("There is no profile with given name")
 					os.Exit(1)
@@ -86,27 +90,7 @@ func delCommand(cfg storage, prompt func(storage, io.Writer) (string, error)) *c
 	}
 }
 
-func promptDeleteProfile(cfg storage, _ io.Writer) (string, error) {
-	if cfg.Len() == 0 {
-		return "", fmt.Errorf("There are no available profiles")
-	}
-
-	var profile string
-
-	s := huh.NewSelect[string]().
-		Title("Select a profile").
-		Options(huh.NewOptions(cfg.Names()...)...).
-		Value(&profile)
-
-	err := huh.NewForm(huh.NewGroup(s)).Run()
-	if err != nil {
-		return "", err
-	}
-
-	return profile, nil
-}
-
-func deleteProfile(cmd *cobra.Command, cfg storage, filename string, profile string) error {
+func profileDelete(cmd *cobra.Command, cfg storage, filename string, profile string) error {
 	if ok := cfg.DeleteProfile(profile); !ok {
 		cmd.PrintErrln("There is no profile with given name")
 		os.Exit(1)

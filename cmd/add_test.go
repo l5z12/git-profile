@@ -11,6 +11,7 @@ import (
 	"github.com/matryer/is"
 
 	"github.com/dotzero/git-profile/internal/config"
+	"github.com/dotzero/git-profile/internal/ui"
 )
 
 func TestAdd(t *testing.T) {
@@ -39,6 +40,8 @@ func TestAddRejectsPartialArgs(t *testing.T) {
 	is := is.New(t)
 
 	cmd := Add(&storageMock{})
+	cmd.SetOut(&bytes.Buffer{})
+	cmd.SetErr(&bytes.Buffer{})
 	cmd.SetArgs([]string{"profile"})
 
 	err := cmd.Execute()
@@ -65,16 +68,25 @@ func TestAddInteractiveStoresOnlyChangedFilledValues(t *testing.T) {
 
 	var b bytes.Buffer
 
-	cmd := addCommand(cfg, func(cfg storage, _ io.Reader, _ io.Writer) (addPromptResult, error) {
-		return addPromptResult{
-			Profile: "work",
-			Values: map[string]string{
-				userNameKey:       "Jane Doe",
-				userEmailKey:      "new@example.com",
-				userSigningKeyKey: "",
-			},
-		}, nil
-	})
+	cmd := addCommand(
+		cfg,
+		func(_ io.Reader, _ io.Writer) (string, error) {
+			return "work", nil
+		},
+		func(initial ui.ProfileFormData, _ io.Reader, _ io.Writer) (ui.ProfileFormData, error) {
+			is.Equal(initial.Profile, "work")
+			is.Equal(initial.UserName, "Jane Doe")
+			is.Equal(initial.UserEmail, "old@example.com")
+			is.Equal(initial.UserSigningKey, "")
+
+			return ui.ProfileFormData{
+				Profile:        "work",
+				UserName:       "Jane Doe",
+				UserEmail:      "new@example.com",
+				UserSigningKey: "",
+			}, nil
+		},
+	)
 	cmd.SetOut(&b)
 	cmd.SetArgs(nil)
 
@@ -109,16 +121,22 @@ func TestAddInteractiveSkipsSaveWhenNothingChanged(t *testing.T) {
 
 	var b bytes.Buffer
 
-	cmd := addCommand(cfg, func(cfg storage, _ io.Reader, _ io.Writer) (addPromptResult, error) {
-		return addPromptResult{
-			Profile: "work",
-			Values: map[string]string{
-				userNameKey:       "Jane Doe",
-				userEmailKey:      "work@example.com",
-				userSigningKeyKey: "",
-			},
-		}, nil
-	})
+	cmd := addCommand(
+		cfg,
+		func(_ io.Reader, _ io.Writer) (string, error) {
+			return "work", nil
+		},
+		func(initial ui.ProfileFormData, _ io.Reader, _ io.Writer) (ui.ProfileFormData, error) {
+			is.Equal(initial.Profile, "work")
+
+			return ui.ProfileFormData{
+				Profile:        "work",
+				UserName:       "Jane Doe",
+				UserEmail:      "work@example.com",
+				UserSigningKey: "",
+			}, nil
+		},
+	)
 	cmd.SetOut(&b)
 	cmd.SetArgs(nil)
 
@@ -148,9 +166,16 @@ func TestAddInteractiveAbortDoesNotPrintSaveError(t *testing.T) {
 		errOut bytes.Buffer
 	)
 
-	cmd := addCommand(cfg, func(cfg storage, _ io.Reader, _ io.Writer) (addPromptResult, error) {
-		return addPromptResult{}, huh.ErrUserAborted
-	})
+	cmd := addCommand(
+		cfg,
+		func(_ io.Reader, _ io.Writer) (string, error) {
+			return "", huh.ErrUserAborted
+		},
+		func(_ ui.ProfileFormData, _ io.Reader, _ io.Writer) (ui.ProfileFormData, error) {
+			t.Fatalf("PromptProfileFields should not be called")
+			return ui.ProfileFormData{}, nil
+		},
+	)
 	cmd.SetOut(&out)
 	cmd.SetErr(&errOut)
 	cmd.SetArgs(nil)
