@@ -6,7 +6,6 @@ import (
 	"os"
 	"strings"
 
-	"charm.land/bubbles/v2/key"
 	"charm.land/huh/v2"
 	"github.com/spf13/cobra"
 
@@ -143,14 +142,10 @@ func storeInteractiveEntries(
 	return nil
 }
 
-//nolint:funlen
 func runAddPrompt(cfg storage, in io.Reader, out io.Writer) (addPromptResult, error) {
 	result := addPromptResult{
 		Values: make(map[string]string),
 	}
-
-	keymap := huh.NewDefaultKeyMap()
-	keymap.Quit = key.NewBinding(key.WithKeys("ctrl+c", "esc"))
 
 	err := huh.NewForm(
 		huh.NewGroup(huh.
@@ -165,7 +160,7 @@ func runAddPrompt(cfg storage, in io.Reader, out io.Writer) (addPromptResult, er
 				return nil
 			}),
 		),
-	).WithKeyMap(keymap).WithInput(in).WithOutput(out).Run()
+	).WithKeyMap(huh.NewDefaultKeyMap()).WithInput(in).WithOutput(out).Run()
 	if err != nil {
 		return addPromptResult{}, err
 	}
@@ -197,7 +192,7 @@ func runAddPrompt(cfg storage, in io.Reader, out io.Writer) (addPromptResult, er
 				Title("Value for user.signingkey").
 				Value(&signingKey),
 		),
-	).WithKeyMap(keymap).WithInput(in).WithOutput(out).Run()
+	).WithKeyMap(huh.NewDefaultKeyMap()).WithInput(in).WithOutput(out).Run()
 	if err != nil {
 		return addPromptResult{}, err
 	}

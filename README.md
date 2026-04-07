@@ -54,6 +54,17 @@ Displays a list of available profiles
 git profile list
 ```
 
+Delete a profile or a specific key from a profile
+
+```bash
+git profile del
+git profile del home
+git profile del home user.email
+```
+
+When called without arguments, `del` opens an interactive profile selector and
+removes the selected profile entirely.
+
 Applies the selected profile entries to the current git repository
 
 ```bash
