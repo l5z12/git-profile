@@ -29,7 +29,7 @@ The binary will be installed to `$GOBIN` or `$GOPATH/bin`.
 
 ## Quick start
 
-Create a profile:
+Create a profile in interactive mode:
 
 ```bash
 git-profile add
@@ -38,7 +38,7 @@ git-profile add
 Apply a profile in the current Git repository:
 
 ```bash
-git-profile use work
+git-profile use
 ```
 
 ## Usage
