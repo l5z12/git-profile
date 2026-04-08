@@ -7,8 +7,10 @@ import (
 // Version returns `version` command
 func Version(c *Cmd) *cobra.Command {
 	return &cobra.Command{
-		Use:   "version",
-		Short: "Print the version number of Git Profile",
+		Use:     "version",
+		Short:   "Print version information",
+		Long:    "Print the version, commit hash, and build date.",
+		Example: "git-profile version",
 		Run: func(cmd *cobra.Command, _ []string) {
 			cmd.Println("Git Profile")
 			cmd.Println("Version:", c.Version)

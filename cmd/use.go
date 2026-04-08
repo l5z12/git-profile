@@ -25,6 +25,10 @@ func useCommand(
 		Aliases: []string{"u"},
 		Short:   "Use a profile",
 		Long:    "Applies the selected profile entries to the current git repository.",
+		Example: multiline(
+			`git-profile use`,
+			`git-profile use my-profile`,
+		),
 		Run: func(cmd *cobra.Command, args []string) {
 			if !v.IsRepository() {
 				cmd.PrintErrln("The current working directory is not a git repository.")

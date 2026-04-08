@@ -23,7 +23,7 @@ func delCommand(
 	return &cobra.Command{
 		Use:     "del [profile] [key]",
 		Aliases: []string{"rm"},
-		Short:   "Delete an entry or a profile",
+		Short:   "Delete a profile or a profile entry",
 		Long: multiline(
 			`Delete an entry from a profile or an entire profile.`,
 			`Enter the "key" argument to remove the exact key from the profile.`,

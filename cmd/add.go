@@ -31,8 +31,8 @@ func addCommand(
 	return &cobra.Command{
 		Use:     "add [profile] [key] [value]",
 		Aliases: []string{"set"},
-		Short:   "Add an entry to a profile",
-		Long:    "Adds an entry to a profile or updates an existing profile.",
+		Short:   "Add or update profile entries",
+		Long:    "Add a key to a profile or update an existing profile.",
 		Example: multiline(
 			`git-profile add`,
 			`git-profile add my-profile user.email work@example.com`,

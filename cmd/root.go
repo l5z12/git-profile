@@ -33,10 +33,10 @@ type Cmd struct {
 func New() *Cmd {
 	root := cobra.Command{
 		Use:   "git-profile",
-		Short: "Allows you to switch between multiple user profiles in git repositories",
+		Short: "Manage multiple Git identities per repository",
 		Long: multiline(
-			"Git Profile allows you to add and switch between multiple",
-			"user profiles in your git repositories.",
+			"Git Profile helps you manage multiple Git identities",
+			"and switch between them per repository.",
 		),
 	}
 

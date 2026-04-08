@@ -13,7 +13,7 @@ func Export(cfg storage) *cobra.Command {
 		Use:     "export [profile]",
 		Aliases: []string{"e"},
 		Short:   "Export a profile",
-		Long:    "Export a profile in JSON format.",
+		Long:    "Export a profile as JSON.",
 		Args:    cobra.ExactArgs(1),
 		Example: "git-profile export my-profile",
 		Run: func(cmd *cobra.Command, args []string) {

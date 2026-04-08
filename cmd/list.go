@@ -10,7 +10,8 @@ func List(cfg storage) *cobra.Command {
 		Use:     "list",
 		Aliases: []string{"l"},
 		Short:   "List profiles",
-		Long:    "Displays a list of available profiles.",
+		Long:    "Display the list of available profiles.",
+		Example: "git-profile list",
 		Run: func(cmd *cobra.Command, _ []string) {
 			if cfg.Len() == 0 {
 				cmd.Println(`There are no available profiles.`)

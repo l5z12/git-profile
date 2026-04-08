@@ -16,8 +16,9 @@ func Current(cfg storage, v vcs) *cobra.Command {
 	return &cobra.Command{
 		Use:     "current",
 		Aliases: []string{"c"},
-		Short:   "Show selected profile",
-		Long:    "Show selected profile for current repository.",
+		Short:   "Show the current profile",
+		Long:    "Show the selected profile for the current repository.",
+		Example: "git-profile current",
 		Run: func(cmd *cobra.Command, _ []string) {
 			if cfg.Len() == 0 || !v.IsRepository() {
 				os.Exit(1)
