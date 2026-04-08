@@ -26,11 +26,11 @@ func Current(cfg storage, v vcs) *cobra.Command {
 
 			res, err := v.Get(currentProfileKey)
 			if len(res) == 0 || err != nil {
-				cmd.Printf("%s\n", defaultProfileName)
+				cmd.Printf("Current profile is: %s\n", defaultProfileName)
 				os.Exit(0)
 			}
 
-			cmd.Printf("%s\n", res)
+			cmd.Printf("Current profile is: %s\n", res)
 		},
 	}
 }

@@ -34,5 +34,5 @@ func TestCurrent(t *testing.T) {
 	err := cmd.Execute()
 
 	is.NoErr(err)
-	is.Equal(strings.TrimSpace(b.String()), "home")
+	is.Equal(strings.TrimSpace(b.String()), "Current profile is: home")
 }

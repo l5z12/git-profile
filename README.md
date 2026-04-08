@@ -121,8 +121,6 @@ Show the currently selected profile for the current repository:
 git-profile current
 ```
 
-If no profile has been applied yet, the command prints `default`.
-
 ### `export`
 
 Export a profile as JSON:
