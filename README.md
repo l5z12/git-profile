@@ -1,15 +1,15 @@
-# Git Profile switcher
+# Git Profile
 
 [![build](https://github.com/dotzero/git-profile/actions/workflows/ci.yml/badge.svg)](https://github.com/dotzero/git-profile/actions/workflows/ci.yml)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/dotzero/git-profile/blob/master/LICENSE)
 
-Git Profile allows you to switch between multiple user profiles in git repositories
+Git Profile helps you manage multiple Git identities and switch between them per repository.
 
 ![](./demo/demo.gif)
 
 ## Installation
 
-If you are a macOS user, you can use [Homebrew](http://brew.sh/):
+### Homebrew
 
 ```bash
 brew install dotzero/tap/git-profile
@@ -17,133 +17,202 @@ brew install dotzero/tap/git-profile
 
 ### Prebuilt binaries
 
-Download the binary from the [releases](https://github.com/dotzero/git-profile/releases) page and place it under `$PATH` directory.
+Download a binary from the [releases](https://github.com/dotzero/git-profile/releases) page and place it in a directory listed in `$PATH`.
 
-### Building from source
-
-If your operating system does not have a binary release, but does run Go, you can build it from the source.
+### Build from source
 
 ```bash
-go get -u github.com/dotzero/git-profile
+go install github.com/dotzero/git-profile@latest
 ```
 
-The binary will then be installed to `$GOPATH/bin` (or your `$GOBIN`).
+The binary will be installed to `$GOBIN` or `$GOPATH/bin`.
+
+## Quick start
+
+Create a profile:
+
+```bash
+git-profile add
+```
+
+Apply a profile in the current Git repository:
+
+```bash
+git-profile use work
+```
 
 ## Usage
 
-Adds an entry to a profile or updates an existing profile
+### `add`
+
+Add a key to a profile or update an existing one:
 
 ```bash
-git profile add home user.name dotzero
-git profile add home user.email "mail@mail.com"
-git profile add home user.signingkey AAAAAAAA
+git-profile add work user.name "John Doe"
+git-profile add work user.email work@example.com
+git-profile add work user.signingkey AAAAAAAA
 ```
 
-If no arguments are provided, `add` starts an interactive mode:
+Run without arguments to start interactive mode:
 
 ```bash
-git profile add
+git-profile add
 ```
 
-It will ask for the profile name and values for `user.name`, `user.email`, and
-`user.signingkey`. Leaving a field empty skips writing that field for a new
-profile. For an existing profile, the current values are prefilled and pressing
-Enter keeps them unchanged. Press `Esc` or `Ctrl+C` to cancel interactive mode.
+Interactive mode asks for:
+- profile name
+- `user.name`
+- `user.email`
+- `user.signingkey`
 
-Displays a list of available profiles
+For an existing profile, current values are prefilled.
+For a new profile, empty fields are skipped.
+
+### `list`
+
+Show all available profiles:
 
 ```bash
-git profile list
+git-profile list
 ```
 
-Delete a profile or a specific key from a profile
+### `del`
+
+Delete a profile or a specific key from a profile:
 
 ```bash
-git profile del
-git profile del home
-git profile del home user.email
+git-profile del
+git-profile del work
+git-profile del work user.email
 ```
 
-When called without arguments, `del` opens an interactive profile selector and
-removes the selected profile entirely.
+When called without arguments, `del` opens an interactive profile selector and deletes the selected profile.
+Press `Esc` or `Ctrl+C` to cancel.
 
-Applies the selected profile entries to the current git repository
+### `use`
+
+Apply a profile to the current Git repository:
 
 ```bash
-git profile use home
-
-# Under the hood it runs following commands:
-# git config --local user.name dotzero
-# git config --local user.email "me@dotzero.ru"
-# git config --local user.signingkey AAAAAAAA
+git-profile use work
 ```
 
-If no profile name is provided, an interactive selector will appear to choose a profile
+Under the hood, this writes local Git config values, for example:
 
 ```bash
-git profile use
+git config --local user.name "John Doe"
+git config --local user.email work@example.com
+git config --local user.signingkey AAAAAAAA
 ```
 
-Export a profile in JSON format
+Run without arguments to select a profile interactively:
 
 ```bash
-git profile export home > home.json
+git-profile use
 ```
 
-Import profile from JSON format
+`use` must be executed inside a Git repository.
+
+### `current`
+
+Show the currently selected profile for the current repository:
 
 ```bash
-cat home.json | xargs -0 git profile import home
+git-profile current
+```
+
+If no profile has been applied yet, the command prints `default`.
+
+### `export`
+
+Export a profile as JSON:
+
+```bash
+git-profile export work
+git-profile export work > work.json
+```
+
+Example output:
+
+```json
+[
+  { "key": "user.name", "value": "John Doe" },
+  { "key": "user.email", "value": "work@example.com" },
+  { "key": "user.signingkey", "value": "AAAAAAAA" }
+]
+```
+
+### `import`
+
+Import a profile from JSON:
+
+```bash
+git-profile import work '[{"key":"user.name","value":"John Doe"},{"key":"user.email","value":"work@example.com"}]'
+```
+
+If you already have JSON in a file:
+
+```bash
+git-profile import work "$(cat work.json)"
+```
+
+## Config file
+
+By default, Git Profile stores profiles in:
+
+```bash
+~/.gitprofile
+```
+
+You can override it with:
+
+```bash
+git-profile --config /path/to/file add work user.email work@example.com
 ```
 
 ## Shell Completion
 
-Shell completion is available for `git-profile` command.
+Shell completion is available for `git-profile`.
 
-**Note:** Use `git-profile TAB` instead of `git profile TAB` for completion.
+Note: use `git-profile ...`, not `git profile ...`, when generating or using completion.
 
 ### Bash
 
 Requires [bash-completion](https://github.com/scop/bash-completion).
 
 ```bash
-# Temporary (current session only)
 source <(git-profile completion bash)
+```
 
-# Permanent (Linux)
+To install permanently:
+
+```bash
 git-profile completion bash | sudo tee /etc/bash_completion.d/git-profile
+```
 
-# Permanent (macOS)
+On macOS:
+
+```bash
 git-profile completion bash > $(brew --prefix)/etc/bash_completion.d/git-profile
 ```
 
 ### Zsh
 
 ```bash
-# Create completion directory if it doesn't exist
 mkdir -p ~/.zsh/completions
-
-# Generate completion file
 git-profile completion zsh > ~/.zsh/completions/_git-profile
-
-# Add to ~/.zshrc if not already present
 echo 'fpath=(~/.zsh/completions $fpath)' >> ~/.zshrc
-echo "autoload -U compinit && compinit" >> ~/.zshrc
-
-# Reload shell
+echo 'autoload -U compinit && compinit' >> ~/.zshrc
 source ~/.zshrc
 ```
 
 ### Fish
 
 ```bash
-# Temporary (current session only)
 git-profile completion fish | source
-
-# Permanent
 git-profile completion fish > ~/.config/fish/completions/git-profile.fish
 ```
 
 ## License
 
-http://www.opensource.org/licenses/mit-license.php
+[MIT](http://www.opensource.org/licenses/mit-license.php)
