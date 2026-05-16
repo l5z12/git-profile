@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+
+	"github.com/dotzero/git-profile/internal/ui"
 )
 
 // List returns `list` command
@@ -22,14 +24,14 @@ func List(cfg storage) *cobra.Command {
 				return
 			}
 
-			cmd.Println("Available profiles:")
+			cmd.Println(ui.RenderInline(ui.TitleStyle, "Available profiles:"))
 
 			for _, name := range cfg.Names() {
-				cmd.Printf("[%s]\n", name)
+				cmd.Println("\n" + ui.RenderInline(ui.NameStyle, name))
 
 				profile, _ := cfg.Lookup(name)
 				for _, entry := range profile {
-					cmd.Printf("\t%s = %s\n", entry.Key, entry.Value)
+					cmd.Printf("%s: %s\n", ui.RenderInline(ui.KeyStyle, entry.Key), ui.RenderInline(ui.ValueStyle, entry.Value))
 				}
 			}
 		},

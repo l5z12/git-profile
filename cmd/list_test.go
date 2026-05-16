@@ -5,9 +5,11 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/charmbracelet/x/ansi"
 	"github.com/matryer/is"
 
 	"github.com/dotzero/git-profile/internal/config"
+	"github.com/dotzero/git-profile/internal/ui"
 )
 
 func TestList(t *testing.T) {
@@ -35,6 +37,13 @@ func TestList(t *testing.T) {
 	err := cmd.Execute()
 
 	is.NoErr(err)
-	is.True(strings.Contains(b.String(), "home"))
-	is.True(strings.Contains(b.String(), "user.email"))
+	output := b.String()
+	is.True(strings.Contains(output, ui.RenderInline(ui.TitleStyle, "Available profiles:")))
+	is.True(strings.Contains(output, ui.RenderInline(ui.NameStyle, "home")))
+	is.True(strings.Contains(output, ui.RenderInline(ui.KeyStyle, "user.email")+": "+ui.RenderInline(ui.ValueStyle, "work@example.com")))
+	is.Equal(ansi.Strip(output), `Available profiles:
+
+home
+user.email: work@example.com
+`)
 }

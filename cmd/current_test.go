@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"bytes"
-	"strings"
 	"testing"
 
 	"github.com/matryer/is"
+
+	"github.com/dotzero/git-profile/internal/ui"
 )
 
 func TestCurrent(t *testing.T) {
@@ -34,5 +35,5 @@ func TestCurrent(t *testing.T) {
 	err := cmd.Execute()
 
 	is.NoErr(err)
-	is.Equal(strings.TrimSpace(b.String()), "Current profile is: home")
+	is.Equal(b.String(), ui.RenderInline(ui.TitleStyle, "Current profile is:")+" "+ui.RenderInline(ui.NameStyle, "home")+"\n")
 }

@@ -4,6 +4,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+
+	"github.com/dotzero/git-profile/internal/ui"
 )
 
 const (
@@ -24,13 +26,12 @@ func Current(cfg storage, v vcs) *cobra.Command {
 				os.Exit(1)
 			}
 
-			res, err := v.Get(currentProfileKey)
-			if len(res) == 0 || err != nil {
-				cmd.Printf("Current profile is: %s\n", defaultProfileName)
-				os.Exit(0)
+			profile, err := v.Get(currentProfileKey)
+			if len(profile) == 0 || err != nil {
+				profile = defaultProfileName
 			}
 
-			cmd.Printf("Current profile is: %s\n", res)
+			cmd.Printf("%s %s\n", ui.RenderInline(ui.TitleStyle, "Current profile is:"), ui.RenderInline(ui.NameStyle, profile))
 		},
 	}
 }
