@@ -48,17 +48,17 @@ func delCommand(
 				profile, err := prompt(cfg.Names(), cmd.InOrStdin(), cmd.OutOrStdout())
 				if err != nil {
 					if ui.IsAborted(err) {
-						cmd.Println("Interactive delete cancelled.")
+						ui.PrintErrln(cmd, ui.ErrorStyle, "Interactive delete cancelled.")
 						return
 					}
 
-					cmd.PrintErrln(err)
+					ui.PrintErrln(cmd, ui.ErrorStyle, "%s", err)
 					os.Exit(1)
 				}
 
 				err = profileDelete(cmd, cfg, filename, profile)
 				if err != nil {
-					cmd.PrintErrln("Unable to save config file:", err)
+					ui.PrintErrln(cmd, ui.ErrorStyle, "Unable to save config file: %s", err)
 					os.Exit(1)
 				}
 
@@ -68,23 +68,23 @@ func delCommand(
 
 				err := profileDelete(cmd, cfg, filename, profile)
 				if err != nil {
-					cmd.PrintErrln("Unable to save config file:", err)
+					ui.PrintErrln(cmd, ui.ErrorStyle, "Unable to save config file: %s", err)
 					os.Exit(1)
 				}
 			case 2:
 				profile := args[0]
 				if ok := cfg.Delete(profile, args[1]); !ok {
-					cmd.PrintErrln("There is no profile with given name")
+					ui.PrintErrln(cmd, ui.ErrorStyle, "There is no profile with given name")
 					os.Exit(1)
 				}
 
 				err := cfg.Save(filename)
 				if err != nil {
-					cmd.PrintErrln("Unable to save config file:", err)
+					ui.PrintErrln(cmd, ui.ErrorStyle, "Unable to save config file: %s", err)
 					os.Exit(1)
 				}
 
-				cmd.Printf("Successfully removed `%s` from `%s` profile.\n", args[1], profile)
+				ui.Println(cmd, ui.SuccessStyle, "Successfully removed `%s` from `%s` profile.\n", args[1], profile)
 			}
 		},
 	}
@@ -92,7 +92,7 @@ func delCommand(
 
 func profileDelete(cmd *cobra.Command, cfg storage, filename string, profile string) error {
 	if ok := cfg.DeleteProfile(profile); !ok {
-		cmd.PrintErrln("There is no profile with given name")
+		ui.PrintErrln(cmd, ui.ErrorStyle, "There is no profile with given name")
 		os.Exit(1)
 	}
 
@@ -101,7 +101,7 @@ func profileDelete(cmd *cobra.Command, cfg storage, filename string, profile str
 		return err
 	}
 
-	cmd.Printf("Successfully removed `%s` profile.\n", profile)
+	ui.Println(cmd, ui.SuccessStyle, "Successfully removed `%s` profile.\n", profile)
 
 	return nil
 }

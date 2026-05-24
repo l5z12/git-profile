@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"charm.land/huh/v2"
-	"github.com/charmbracelet/x/ansi"
 	"github.com/matryer/is"
 
 	"github.com/dotzero/git-profile/internal/config"
@@ -34,7 +33,7 @@ func TestAdd(t *testing.T) {
 	err := cmd.Execute()
 
 	is.NoErr(err)
-	is.Equal(strings.TrimSpace(b.String()), "Successfully stored `key=value` to `profile` profile.")
+	is.Equal(trim(b.String()), "Successfully stored `key=value` to `profile` profile.")
 }
 
 func TestAddRejectsPartialArgs(t *testing.T) {
@@ -99,7 +98,7 @@ func TestAddInteractiveStoresOnlyChangedFilledValues(t *testing.T) {
 	is.Equal(cfg.StoreCalls()[0].Key, userEmailKey)
 	is.Equal(cfg.StoreCalls()[0].Value, "new@example.com")
 	is.Equal(len(cfg.SaveCalls()), 1)
-	is.Equal(strings.TrimSpace(b.String()), "Successfully updated `work` profile.")
+	is.Equal(trim(b.String()), "Successfully updated `work` profile.")
 }
 
 func TestAddInteractiveSkipsSaveWhenNothingChanged(t *testing.T) {
@@ -146,7 +145,7 @@ func TestAddInteractiveSkipsSaveWhenNothingChanged(t *testing.T) {
 	is.NoErr(err)
 	is.Equal(len(cfg.StoreCalls()), 0)
 	is.Equal(len(cfg.SaveCalls()), 0)
-	is.Equal(strings.TrimSpace(b.String()), "No profile changes to save.")
+	is.Equal(trim(b.String()), "No profile changes to save.")
 }
 
 func TestAddInteractiveAbortDoesNotPrintSaveError(t *testing.T) {
@@ -184,5 +183,5 @@ func TestAddInteractiveAbortDoesNotPrintSaveError(t *testing.T) {
 	err := cmd.Execute()
 
 	is.NoErr(err)
-	is.Equal(ansi.Strip(errOut.String()), "Interactive add cancelled.\n")
+	is.Equal(trim(errOut.String()), "Interactive add cancelled.")
 }

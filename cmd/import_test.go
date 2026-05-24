@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/charmbracelet/x/ansi"
 	"github.com/matryer/is"
 )
 
@@ -27,5 +26,5 @@ func TestImport(t *testing.T) {
 	err := cmd.Execute()
 
 	is.NoErr(err)
-	is.Equal(ansi.Strip(b.String()), "Successfully imported `profile` profile.\n")
+	is.Equal(trim(b.String()), "Successfully imported `profile` profile.")
 }

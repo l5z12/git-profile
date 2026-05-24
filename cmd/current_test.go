@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/charmbracelet/x/ansi"
 	"github.com/matryer/is"
 )
 
@@ -34,5 +33,5 @@ func TestCurrent(t *testing.T) {
 	err := cmd.Execute()
 
 	is.NoErr(err)
-	is.Equal(ansi.Strip(b.String()), "Current profile: home\n")
+	is.Equal(trim(b.String()), "Current profile: home")
 }

@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"bytes"
-	"strings"
 	"testing"
 
 	"github.com/matryer/is"
@@ -30,5 +29,5 @@ func TestExport(t *testing.T) {
 	err := cmd.Execute()
 
 	is.NoErr(err)
-	is.Equal(strings.TrimSpace(b.String()), `[{"key":"user.email","value":"work@example.com"}]`)
+	is.Equal(trim(b.String()), `[{"key":"user.email","value":"work@example.com"}]`)
 }

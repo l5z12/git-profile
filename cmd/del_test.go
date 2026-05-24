@@ -3,7 +3,6 @@ package cmd
 import (
 	"bytes"
 	"io"
-	"strings"
 	"testing"
 
 	"charm.land/huh/v2"
@@ -34,7 +33,7 @@ func TestDel(t *testing.T) {
 	err := cmd.Execute()
 
 	is.NoErr(err)
-	is.Equal(strings.TrimSpace(b.String()), "Successfully removed `profile` profile.")
+	is.Equal(trim(b.String()), "Successfully removed `profile` profile.")
 }
 
 func TestDelKey(t *testing.T) {
@@ -58,7 +57,7 @@ func TestDelKey(t *testing.T) {
 	err := cmd.Execute()
 
 	is.NoErr(err)
-	is.Equal(strings.TrimSpace(b.String()), "Successfully removed `user.name` from `profile` profile.")
+	is.Equal(trim(b.String()), "Successfully removed `user.name` from `profile` profile.")
 }
 
 func TestDelInteractive(t *testing.T) {
@@ -90,7 +89,7 @@ func TestDelInteractive(t *testing.T) {
 	is.Equal(len(cfg.DeleteProfileCalls()), 1)
 	is.Equal(cfg.DeleteProfileCalls()[0].Profile, "work")
 	is.Equal(len(cfg.SaveCalls()), 1)
-	is.Equal(strings.TrimSpace(b.String()), "Successfully removed `work` profile.")
+	is.Equal(trim(b.String()), "Successfully removed `work` profile.")
 }
 
 func TestDelInteractiveCancelled(t *testing.T) {
@@ -125,6 +124,5 @@ func TestDelInteractiveCancelled(t *testing.T) {
 	err := cmd.Execute()
 
 	is.NoErr(err)
-	is.Equal(strings.TrimSpace(out.String()), "Interactive delete cancelled.")
-	is.Equal(errOut.String(), "")
+	is.Equal(trim(errOut.String()), "Interactive delete cancelled.")
 }

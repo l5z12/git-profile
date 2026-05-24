@@ -89,7 +89,7 @@ func profileUpdateEntry(
 		return err
 	}
 
-	cmd.Printf("Successfully stored `%s=%s` to `%s` profile.\n", key, value, profile)
+	ui.Println(cmd, ui.SuccessStyle, "Successfully stored `%s=%s` to `%s` profile.\n", key, value, profile)
 
 	return nil
 }
@@ -152,7 +152,7 @@ func profileUpdateEntries(
 	}
 
 	if changed == 0 {
-		cmd.Println("No profile changes to save.")
+		ui.Println(cmd, ui.SuccessStyle, "No profile changes to save.")
 		return nil
 	}
 
@@ -161,7 +161,7 @@ func profileUpdateEntries(
 		return err
 	}
 
-	cmd.Printf("Successfully updated `%s` profile.\n", result.Profile)
+	ui.Println(cmd, ui.SuccessStyle, "Successfully updated `%s` profile.\n", result.Profile)
 
 	return nil
 }

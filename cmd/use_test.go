@@ -6,7 +6,6 @@ import (
 	"io"
 	"testing"
 
-	"github.com/charmbracelet/x/ansi"
 	"github.com/matryer/is"
 
 	"github.com/dotzero/git-profile/internal/config"
@@ -44,7 +43,7 @@ func TestUse(t *testing.T) {
 	err := cmd.Execute()
 
 	is.NoErr(err)
-	is.Equal(ansi.Strip(b.String()), "Successfully applied `profile` profile to current git repository.\n")
+	is.Equal(trim(b.String()), "Successfully applied `profile` profile to current git repository.")
 }
 
 func TestProfileResolveInteractive(t *testing.T) {
