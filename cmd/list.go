@@ -7,7 +7,7 @@ import (
 )
 
 // List returns `list` command
-func List(cfg storage) *cobra.Command {
+func List(cfg storage, v vcs) *cobra.Command {
 	return &cobra.Command{
 		Use:     "list",
 		Aliases: []string{"l"},
@@ -15,23 +15,16 @@ func List(cfg storage) *cobra.Command {
 		Long:    "Display the list of available profiles.",
 		Example: "git-profile list",
 		Run: func(cmd *cobra.Command, _ []string) {
-			if cfg.Len() == 0 {
-				cmd.Println(`There are no available profiles.`)
-				cmd.Println(`To add a new profile, use the following examples:`)
-				cmd.Println(`  git-profile add my-profile user.name "John Doe"`)
-				cmd.Println(`  git-profile add my-profile user.email work@example.com`)
+			check(cmd, cfg, v)
 
-				return
-			}
-
-			cmd.Println(ui.RenderInline(ui.TitleStyle, "Available profiles:"))
+			ui.Println(cmd, ui.InfoStyle, "Available profiles:")
 
 			for _, name := range cfg.Names() {
-				cmd.Println("\n" + ui.RenderInline(ui.NameStyle, name))
+				ui.Println(cmd, ui.SuccessStyle, "- %s:", name)
 
 				profile, _ := cfg.Lookup(name)
 				for _, entry := range profile {
-					cmd.Printf("%s: %s\n", ui.RenderInline(ui.KeyStyle, entry.Key), ui.RenderInline(ui.ValueStyle, entry.Value))
+					ui.Println(cmd, ui.DefaultStyle, "  %s: %s", entry.Key, entry.Value)
 				}
 			}
 		},

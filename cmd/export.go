@@ -5,6 +5,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+
+	"github.com/dotzero/git-profile/internal/ui"
 )
 
 // Export returns `export` command
@@ -21,17 +23,17 @@ func Export(cfg storage) *cobra.Command {
 
 			entries, ok := cfg.Lookup(profile)
 			if !ok {
-				cmd.PrintErrf("There is no profile with `%s` name\n", profile)
+				ui.PrintErrln(cmd, ui.ErrorStyle, "There is no profile with `%s` name", profile)
 				os.Exit(0)
 			}
 
 			data, err := json.Marshal(entries)
 			if err != nil {
-				cmd.PrintErrln("Unable to encode profile values:", err)
+				ui.PrintErrln(cmd, ui.ErrorStyle, "Unable to encode profile values: %s", err)
 				os.Exit(1)
 			}
 
-			cmd.Print(string(data))
+			cmd.Println(string(data))
 		},
 	}
 }

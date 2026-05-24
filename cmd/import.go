@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/dotzero/git-profile/internal/config"
+	"github.com/dotzero/git-profile/internal/ui"
 )
 
 // Import returns `import` command
@@ -26,7 +27,7 @@ func Import(cfg storage) *cobra.Command {
 
 			err := json.Unmarshal([]byte(args[1]), &entries)
 			if err != nil {
-				cmd.PrintErrln("Unable to decode profile values:", err)
+				ui.PrintErrln(cmd, ui.ErrorStyle, "Unable to decode profile values: %s", err)
 				os.Exit(1)
 			}
 
@@ -36,11 +37,11 @@ func Import(cfg storage) *cobra.Command {
 
 			err = cfg.Save(filename)
 			if err != nil {
-				cmd.PrintErrln("Unable to save config file:", err)
+				ui.PrintErrln(cmd, ui.ErrorStyle, "Unable to save config file: %s", err)
 				os.Exit(1)
 			}
 
-			cmd.Printf("Successfully imported `%s` profile.\n", profile)
+			ui.Println(cmd, ui.SuccessStyle, "Successfully imported `%s` profile.", profile)
 		},
 	}
 }

@@ -53,7 +53,7 @@ func addCommand(
 			case 3:
 				err := profileUpdateEntry(cmd, cfg, filename, args[0], args[1], args[2])
 				if err != nil {
-					cmd.PrintErrln("Unable to save config file:", err)
+					ui.PrintErrln(cmd, ui.ErrorStyle, "Unable to save config file: %s", err)
 					os.Exit(1)
 				}
 
@@ -62,11 +62,11 @@ func addCommand(
 				err := profileUpdateEntries(cmd, cfg, filename, promptProfileName, editProfileFields)
 				if err != nil {
 					if ui.IsAborted(err) {
-						cmd.Println("Interactive add cancelled.")
+						ui.PrintErrln(cmd, ui.ErrorStyle, "Interactive add cancelled.")
 						return
 					}
 
-					cmd.PrintErrln("Unable to save config file:", err)
+					ui.PrintErrln(cmd, ui.ErrorStyle, "Unable to save config file: %s", err)
 					os.Exit(1)
 				}
 			}

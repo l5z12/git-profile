@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"charm.land/huh/v2"
+	"github.com/charmbracelet/x/ansi"
 	"github.com/matryer/is"
 
 	"github.com/dotzero/git-profile/internal/config"
@@ -183,6 +184,5 @@ func TestAddInteractiveAbortDoesNotPrintSaveError(t *testing.T) {
 	err := cmd.Execute()
 
 	is.NoErr(err)
-	is.Equal(strings.TrimSpace(out.String()), "Interactive add cancelled.")
-	is.Equal(errOut.String(), "")
+	is.Equal(ansi.Strip(errOut.String()), "Interactive add cancelled.\n")
 }

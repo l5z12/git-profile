@@ -34,5 +34,5 @@ func TestCurrent(t *testing.T) {
 	err := cmd.Execute()
 
 	is.NoErr(err)
-	is.Equal(ansi.Strip(b.String()), "Current profile is: home\n")
+	is.Equal(ansi.Strip(b.String()), "Current profile: home\n")
 }

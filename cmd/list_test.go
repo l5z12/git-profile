@@ -27,13 +27,22 @@ func TestList(t *testing.T) {
 		},
 	}
 
+	vcs := &vcsMock{
+		IsRepositoryFunc: func() bool {
+			return true
+		},
+		GetFunc: func(key string) (string, error) {
+			return "home", nil
+		},
+	}
+
 	var b bytes.Buffer
 
-	cmd := List(cfg)
+	cmd := List(cfg, vcs)
 
 	cmd.SetOut(&b)
 	err := cmd.Execute()
 
 	is.NoErr(err)
-	is.Equal(ansi.Strip(b.String()), "Available profiles:\n\nhome\nuser.email: work@example.com\n")
+	is.Equal(ansi.Strip(b.String()), "Available profiles:\n- home:\n  user.email: work@example.com\n")
 }

@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+
+	"github.com/dotzero/git-profile/internal/ui"
 )
 
 // Version returns `version` command
@@ -12,10 +14,10 @@ func Version(c *Cmd) *cobra.Command {
 		Long:    "Print the version, commit hash, and build date.",
 		Example: "git-profile version",
 		Run: func(cmd *cobra.Command, _ []string) {
-			cmd.Println("Git Profile")
-			cmd.Println("Version:", c.Version)
-			cmd.Println("Commit hash:", c.CommitHash)
-			cmd.Println("Compiled on", c.CompileDate)
+			ui.Println(cmd, ui.InfoStyle, "Git Profile")
+			ui.Println(cmd, ui.DefaultStyle, "Version: %s", c.Version)
+			ui.Println(cmd, ui.DefaultStyle, "Commit hash: %s", c.CommitHash)
+			ui.Println(cmd, ui.DefaultStyle, "Compiled on %s", c.CompileDate)
 		},
 	}
 }

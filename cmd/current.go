@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"os"
-
 	"github.com/spf13/cobra"
 
 	"github.com/dotzero/git-profile/internal/ui"
@@ -21,17 +19,16 @@ func Current(cfg storage, v vcs) *cobra.Command {
 		Short:   "Show the current profile",
 		Long:    "Show the selected profile for the current repository.",
 		Example: "git-profile current",
+		PreRun: func(cmd *cobra.Command, _ []string) {
+			check(cmd, cfg, v)
+		},
 		Run: func(cmd *cobra.Command, _ []string) {
-			if cfg.Len() == 0 || !v.IsRepository() {
-				os.Exit(1)
-			}
-
 			profile, err := v.Get(currentProfileKey)
 			if len(profile) == 0 || err != nil {
 				profile = defaultProfileName
 			}
 
-			cmd.Printf("%s %s\n", ui.RenderInline(ui.TitleStyle, "Current profile is:"), ui.RenderInline(ui.NameStyle, profile))
+			ui.Println(cmd, ui.SuccessStyle, "Current profile: %s", profile)
 		},
 	}
 }
