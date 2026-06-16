@@ -113,6 +113,30 @@ git-profile use
 
 `use` must be executed inside a Git repository.
 
+### `unuse`
+
+Remove the applied profile entries from the current Git repository:
+
+```bash
+git-profile unuse work
+```
+
+Under the hood, this unsets the local Git config values, for example:
+
+```bash
+git config --local --unset user.name
+git config --local --unset user.email
+git config --local --unset user.signingkey
+```
+
+Run without arguments to remove the currently applied profile:
+
+```bash
+git-profile unuse
+```
+
+`unuse` must be executed inside a Git repository.
+
 ### `current`
 
 Show the currently selected profile for the current repository:
