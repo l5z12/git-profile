@@ -397,6 +397,9 @@ func (mock *storageMock) StoreCalls() []struct {
 //			SetFunc: func(key string, value string) error {
 //				panic("mock out the Set method")
 //			},
+//			UnsetFunc: func(key string) error {
+//				panic("mock out the Unset method")
+//			},
 //		}
 //
 //		// use mockedvcs in code that requires vcs
@@ -412,6 +415,9 @@ type vcsMock struct {
 
 	// SetFunc mocks the Set method.
 	SetFunc func(key string, value string) error
+
+	// UnsetFunc mocks the Unset method.
+	UnsetFunc func(key string) error
 
 	// calls tracks calls to the methods.
 	calls struct {
@@ -430,10 +436,16 @@ type vcsMock struct {
 			// Value is the value argument value.
 			Value string
 		}
+		// Unset holds details about calls to the Unset method.
+		Unset []struct {
+			// Key is the key argument value.
+			Key string
+		}
 	}
 	lockGet          sync.RWMutex
 	lockIsRepository sync.RWMutex
 	lockSet          sync.RWMutex
+	lockUnset        sync.RWMutex
 }
 
 // Get calls GetFunc.
@@ -528,5 +540,37 @@ func (mock *vcsMock) SetCalls() []struct {
 	mock.lockSet.RLock()
 	calls = mock.calls.Set
 	mock.lockSet.RUnlock()
+	return calls
+}
+
+// Unset calls UnsetFunc.
+func (mock *vcsMock) Unset(key string) error {
+	if mock.UnsetFunc == nil {
+		panic("vcsMock.UnsetFunc: method is nil but vcs.Unset was just called")
+	}
+	callInfo := struct {
+		Key string
+	}{
+		Key: key,
+	}
+	mock.lockUnset.Lock()
+	mock.calls.Unset = append(mock.calls.Unset, callInfo)
+	mock.lockUnset.Unlock()
+	return mock.UnsetFunc(key)
+}
+
+// UnsetCalls gets all the calls that were made to Unset.
+// Check the length with:
+//
+//	len(mockedvcs.UnsetCalls())
+func (mock *vcsMock) UnsetCalls() []struct {
+	Key string
+} {
+	var calls []struct {
+		Key string
+	}
+	mock.lockUnset.RLock()
+	calls = mock.calls.Unset
+	mock.lockUnset.RUnlock()
 	return calls
 }

@@ -88,3 +88,12 @@ func TestSet(t *testing.T) {
 
 	is.NoErr(err)
 }
+
+func TestUnset(t *testing.T) {
+	is := is.New(t)
+
+	g := &Git{exec: mockExecCommand}
+	err := g.Unset("user.name")
+
+	is.NoErr(err)
+}

@@ -87,6 +87,7 @@ func (c *Cmd) init() {
 		Export(c.config),
 		Import(c.config),
 		Use(c.config, c.git),
+		Unuse(c.config, c.git),
 		Version(c),
 	)
 
